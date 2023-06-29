@@ -1,0 +1,49 @@
+version: '3'
+services:
+  vgsbooking_be_prod:
+    container_name: vgsbooking_be_prod 
+    image: asia.gcr.io/vgsbooking/vgsbooking_be:2022-10-26_0452
+    #build: 
+    #  context: .
+    #  dockerfile: web.Dockerfile
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+    #  - ./api.env:/var/www/html/.env
+    environment:
+        APPLICATION_ENV: prod
+    networks:
+      net:
+        ipv4_address: 10.22.102.5
+
+  vgsbooking_be_redis:
+    restart: always
+    container_name: vgsbooking_be_redis
+    image: redis:alpine
+    command: redis-server --requirepass 5Y7Ne6v4XWz4xWmeRA
+    networks:
+      net:
+        ipv4_address: 10.22.102.4
+        
+  vgsbooking_be_database:
+    restart: always
+    image: mariadb:10.7
+    container_name: vgsbooking_be_database
+    environment:
+        MYSQL_ROOT_PASSWORD: U6m7yL9zCaKHwn7XA4
+        MYSQL_DATABASE: vgsbooking_be
+        MYSQL_USER: vgsbooking_be
+        MYSQL_PASSWORD: KUPcywU5RtcCU8FMEn
+    volumes:
+      - mysql:/var/lib/mysql/
+    networks:
+      net:
+        ipv4_address: 10.22.102.3
+volumes:
+  mysql:
+    
+networks:
+ net:
+  ipam:
+   driver: default
+   config:
+   - subnet: 10.22.102.0/27
